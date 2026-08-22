@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  ADMIN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LEAVE
+}
+
+enum LeaveType {
+  PAID
+  SICK
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PayrollStatus {
+  DRAFT
+  GENERATED
+  PAID
+}
+
+enum NotificationType {
+  LEAVE_STATUS
+  ATTENDANCE_ALERT
+  PAYROLL_ALERT
+  SYSTEM_ALERT
+}
+
+model User {
+  id                  String           @id @default(uuid())
+  employeeId          String           @unique
+  email               String           @unique
+  passwordHash        String
+  role                Role             @default(EMPLOYEE)
+  emailVerified       Boolean          @default(true)
+  aadhaarVerified     Boolean          @default(false)
+  firstLoginCompleted Boolean          @default(false)
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  profile             EmployeeProfile?
+  attendances         Attendance[]
+  leaveRequests       LeaveRequest[]   @relation("UserLeaveRequests")
+  reviewedLeaves      LeaveRequest[]   @relation("AdminReviewedLeaves")
+  payrolls            Payroll[]
+  notifications       Notification[]
+  documents           Document[]
+  aadhaarLogs         AadhaarLog[]
+
+  @@index([email])
+  @@index([employeeId])
+  @@index([role])
+}
+
+model EmployeeProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName         String
+  lastName          String
+  phone             String?
+  address           String?
+  profilePictureUrl String?
+  department        String?
+  designation       String?
+  dateOfJoining     DateTime? @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([department])
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime         @db.Date
+  checkIn   DateTime?
+  checkOut  DateTime?
+  status    AttendanceStatus @default(PRESENT)
+  workHours Float?           @default(0.0)
+  remarks   String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([date])
+}
+
+model LeaveRequest {
+  id           String      @id @default(uuid())
+  userId       String
+  user         User        @relation("UserLeaveRequests", fields: [userId], references: [id], onDelete: Cascade)
+  leaveType    LeaveType
+  startDate    DateTime    @db.Date
+  endDate      DateTime    @db.Date
+  reason       String
+  status       LeaveStatus @default(PENDING)
+  adminRemarks String?
+  reviewedById String?
+  reviewedBy   User?       @relation("AdminReviewedLeaves", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+model Payroll {
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  month       Int
+  year        Int
+  baseSalary  Float
+  allowances  Float         @default(0.0)
+  deductions  Float         @default(0.0)
+  netSalary   Float
+  status      PayrollStatus @default(GENERATED)
+  paymentDate DateTime?
+  remarks     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([userId, month, year])
+  @@index([userId])
+  @@index([month, year])
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      NotificationType @default(SYSTEM_ALERT)
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+}
+
+model Document {
+  id                 String   @id @default(uuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  type               String
+  fileUrl            String
+  verificationStatus String   @default("VERIFIED")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model AadhaarLog {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactionId String   @unique
+  maskedAadhaar String
+  provider      String   @default("MOCK_AADHAAR_KYC")
+  verifiedAt    DateTime @default(now())
+
+  @@index([userId])
+}
