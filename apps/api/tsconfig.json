@@ -1,8 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "module": "commonjs",
     "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -10,6 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",
     "sourceMap": true,
+    "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -17,7 +16,8 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test"]
