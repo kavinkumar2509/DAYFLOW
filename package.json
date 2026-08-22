@@ -4,6 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:web": "pnpm --filter @dayflow/web dev",
+    "dev:api": "pnpm --filter @dayflow/api dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "db:generate": "pnpm --filter @dayflow/database db:generate",
