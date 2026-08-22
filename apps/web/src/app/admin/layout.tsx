@@ -1,35 +1,45 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { Sidebar } from '@/components/shared/Sidebar';
 import { Navbar } from '@/components/shared/Navbar';
-
-const adminNavItems = [
-  { label: 'Admin Dashboard', href: '/admin/dashboard' },
-  { label: 'Employees', href: '/admin/employees' },
-  { label: 'Leave Approvals', href: '/admin/approvals' },
-  { label: 'Attendance Monitor', href: '/admin/attendance' },
-  { label: 'Payroll Management', href: '/admin/payroll' },
-];
+import { DashboardBackgroundMesh } from '@/components/shared/DashboardBackgroundMesh';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    router.push('/login');
+    document.cookie = 'token=; Max-Age=0; path=/; SameSite=Lax';
+    document.cookie = 'user_role=; Max-Age=0; path=/; SameSite=Lax';
+    window.location.href = '/login';
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950">
-      <Sidebar items={adminNavItems} title="DAYFLOW HR" roleBadge="ADMIN / HR" />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Navbar userName="HR Admin" userRole="Admin" onLogout={handleLogout} />
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
+    <div className="relative min-h-screen bg-[#000000] text-slate-100 flex overflow-x-hidden">
+      {/* Seamless Ambient Mesh Waves in Background */}
+      <DashboardBackgroundMesh />
+
+      {/* Role-based Futuristic Sidebar */}
+      <Sidebar
+        role="ADMIN"
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* Main Layout Shell */}
+      <div className="relative z-10 flex-1 flex flex-col min-w-0 min-h-screen">
+        <Navbar
+          userName="Karthik Nair"
+          userRole="Admin / HR"
+          onMenuToggle={() => setSidebarOpen(true)}
+          onLogout={handleLogout}
+        />
+
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
           {children}
         </main>
       </div>

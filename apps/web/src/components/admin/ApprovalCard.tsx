@@ -4,6 +4,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { CalendarDays, Check, X } from 'lucide-react';
 import type { LeaveRequest } from '@/types/leave';
 
 export interface ApprovalCardProps {
@@ -29,39 +30,39 @@ export const ApprovalCard: React.FC<ApprovalCardProps> = ({
   onReject,
 }) => {
   return (
-    <Card className="border-l-4 border-l-amber-500">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <Card className="border-l-2 border-l-purple-500/80">
+      <CardHeader className="flex flex-row items-center justify-between pb-2.5">
         <div>
-          <CardTitle className="text-sm font-semibold">{request.employeeName}</CardTitle>
-          <p className="text-xs text-slate-400">{request.department} • ID: {request.employeeId}</p>
+          <CardTitle className="text-sm font-semibold text-slate-100">{request.employeeName}</CardTitle>
+          <p className="text-[11px] text-slate-500 font-light mt-0.5">{request.department} • <span className="font-mono text-purple-400">{request.employeeId}</span></p>
         </div>
         <Badge variant="warning">{request.status}</Badge>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="text-xs text-slate-600 dark:text-slate-300">
-          <span className="font-semibold text-slate-900 dark:text-slate-100">{request.leaveType} LEAVE</span>
+        <div className="text-xs text-slate-300">
+          <span className="font-semibold text-purple-300">{request.leaveType} LEAVE</span>
           {' • '}
-          {request.startDate} to {request.endDate} ({request.totalDays} days)
+          <span className="text-slate-400 font-light">{request.startDate} to {request.endDate} ({request.totalDays} days)</span>
         </div>
-        <p className="text-xs italic text-slate-500 bg-slate-50 dark:bg-slate-800 p-2.5 rounded-lg">
+        <p className="text-xs italic text-slate-400 bg-white/[0.03] p-3 rounded-xl border border-white/[0.06] font-light leading-relaxed">
           "{request.reason}"
         </p>
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-2.5 pt-1">
           <Button
             size="sm"
             variant="primary"
-            className="w-full text-xs"
+            className="w-full text-xs h-8"
             onClick={() => request.id && onApprove?.(request.id)}
           >
-            Approve
+            <Check className="w-3.5 h-3.5 mr-1" /> Approve
           </Button>
           <Button
             size="sm"
             variant="outline"
-            className="w-full text-xs text-rose-600 border-rose-200 hover:bg-rose-50"
+            className="w-full text-xs h-8 text-rose-400 hover:text-rose-300 hover:border-rose-500/40"
             onClick={() => request.id && onReject?.(request.id)}
           >
-            Reject
+            <X className="w-3.5 h-3.5 mr-1" /> Reject
           </Button>
         </div>
       </CardContent>

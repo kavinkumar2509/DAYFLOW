@@ -39,13 +39,22 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
       breakdown: { grossSalary: 78000, totalDeductions: 7800, netSalary: 70200 } as any,
       status: 'DRAFT',
     },
+    {
+      id: 'pr-4',
+      employeeId: 'EMP-014',
+      employeeName: 'Rahul Verma',
+      department: 'Backend Engineering',
+      month: 'August 2026',
+      breakdown: { grossSalary: 88000, totalDeductions: 8800, netSalary: 79200 } as any,
+      status: 'PAID',
+    },
   ],
   onProcessIndividual,
 }) => {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-      <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-        <thead className="bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+    <div className="overflow-x-auto rounded-2xl border border-white/[0.08] bg-black/40 backdrop-blur-xl">
+      <table className="w-full text-left text-xs sm:text-sm text-slate-300">
+        <thead className="bg-white/[0.03] text-[11px] font-semibold text-slate-400 uppercase tracking-wider border-b border-white/[0.06]">
           <tr>
             <th className="px-4 py-3">Employee</th>
             <th className="px-4 py-3">Cycle</th>
@@ -56,20 +65,20 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
             <th className="px-4 py-3 text-right">Action</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+        <tbody className="divide-y divide-white/[0.04]">
           {records.map((rec) => (
-            <tr key={rec.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-              <td className="px-4 py-3">
-                <div className="font-medium text-slate-900 dark:text-slate-100">{rec.employeeName}</div>
-                <div className="text-xs text-slate-400 font-mono">{rec.employeeId}</div>
+            <tr key={rec.id} className="hover:bg-white/[0.03] transition-colors">
+              <td className="px-4 py-3.5">
+                <div className="font-medium text-slate-100">{rec.employeeName}</div>
+                <div className="text-[11px] text-slate-500 font-mono">{rec.employeeId}</div>
               </td>
-              <td className="px-4 py-3 text-xs">{rec.month}</td>
-              <td className="px-4 py-3 font-medium">₹{rec.breakdown?.grossSalary?.toLocaleString('en-IN')}</td>
-              <td className="px-4 py-3 text-rose-500 font-medium">-₹{rec.breakdown?.totalDeductions?.toLocaleString('en-IN')}</td>
-              <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100">
+              <td className="px-4 py-3.5 text-xs text-slate-400 font-light">{rec.month}</td>
+              <td className="px-4 py-3.5 font-medium text-slate-200">₹{rec.breakdown?.grossSalary?.toLocaleString('en-IN')}</td>
+              <td className="px-4 py-3.5 text-rose-400 font-mono text-xs">-₹{rec.breakdown?.totalDeductions?.toLocaleString('en-IN')}</td>
+              <td className="px-4 py-3.5 font-bold text-slate-100">
                 ₹{rec.breakdown?.netSalary?.toLocaleString('en-IN')}
               </td>
-              <td className="px-4 py-3">
+              <td className="px-4 py-3.5">
                 <Badge
                   variant={
                     rec.status === 'PAID' ? 'success' : rec.status === 'PROCESSING' ? 'warning' : 'default'
@@ -78,11 +87,11 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
                   {rec.status}
                 </Badge>
               </td>
-              <td className="px-4 py-3 text-right">
+              <td className="px-4 py-3.5 text-right">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-xs"
+                  className="text-xs h-7 px-2.5 text-purple-400 hover:text-purple-300"
                   onClick={() => rec.id && onProcessIndividual?.(rec.id)}
                 >
                   Manage

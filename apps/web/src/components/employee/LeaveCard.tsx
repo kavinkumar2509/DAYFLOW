@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { CalendarDays } from 'lucide-react';
 import type { LeaveBalance } from '@/types/leave';
 
 export interface LeaveCardProps {
@@ -17,29 +18,32 @@ export const LeaveCard: React.FC<LeaveCardProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Leave Balance</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <CalendarDays className="w-4 h-4 text-purple-400" />
+          Leave Quotas
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+      <CardContent className="space-y-2.5">
+        <div className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-white/[0.06]">
           <div>
-            <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">Casual Leave</div>
-            <div className="text-xs text-slate-500">Used: {balances.casualLeave.used} of {balances.casualLeave.total}</div>
+            <div className="text-xs sm:text-sm font-medium text-slate-200">Casual Leave</div>
+            <div className="text-[11px] text-slate-400 font-light">Used: {balances.casualLeave.used} of {balances.casualLeave.total}</div>
           </div>
           <Badge variant="info">{balances.casualLeave.remaining} Available</Badge>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-white/[0.06]">
           <div>
-            <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">Sick Leave</div>
-            <div className="text-xs text-slate-500">Used: {balances.sickLeave.used} of {balances.sickLeave.total}</div>
+            <div className="text-xs sm:text-sm font-medium text-slate-200">Sick Leave</div>
+            <div className="text-[11px] text-slate-400 font-light">Used: {balances.sickLeave.used} of {balances.sickLeave.total}</div>
           </div>
           <Badge variant="warning">{balances.sickLeave.remaining} Available</Badge>
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-white/[0.06]">
           <div>
-            <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">Paid Leave</div>
-            <div className="text-xs text-slate-500">Used: {balances.paidLeave.used} of {balances.paidLeave.total}</div>
+            <div className="text-xs sm:text-sm font-medium text-slate-200">Paid Leave</div>
+            <div className="text-[11px] text-slate-400 font-light">Used: {balances.paidLeave.used} of {balances.paidLeave.total}</div>
           </div>
           <Badge variant="success">{balances.paidLeave.remaining} Available</Badge>
         </div>

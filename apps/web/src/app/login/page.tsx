@@ -2,194 +2,105 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Modal } from '@/components/ui/modal';
+import { LoginBackgroundMesh, LoginForm, AadhaarVerificationModal } from '@/components/auth';
+import type { LoginFormData } from '@/components/auth/LoginForm';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'EMPLOYEE' | 'ADMIN' | 'HR'>('EMPLOYEE');
   const [isLoading, setIsLoading] = useState(false);
-
-  // Aadhaar first-login state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showAadhaarModal, setShowAadhaarModal] = useState(false);
-  const [aadhaarInput, setAadhaarInput] = useState('');
-  const [aadhaarOtp, setAadhaarOtp] = useState('');
-  const [aadhaarStep, setAadhaarStep] = useState<'NUMBER' | 'OTP'>('NUMBER');
-  const [aadhaarError, setAadhaarError] = useState('');
+  const [targetRole, setTargetRole] = useState<'EMPLOYEE' | 'ADMIN'>('EMPLOYEE');
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /**
+   * Handle user login submission
+   */
+  const handleLogin = async (formData: LoginFormData) => {
     setIsLoading(true);
+    setErrorMessage(null);
+    setTargetRole(formData.role);
 
     try {
-      // Backend integration placeholder:
-      // const res = await authApi.login({ email, password });
-      // In starter demo, simulate first-login detection or role redirect
-      
-      // Simulate first-login scenario if email has 'first' in it or role is EMPLOYEE (demo placeholder)
-      const isFirstLoginDemo = email.includes('new') || email.includes('first');
+      // Simulate authentication resolution delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      if (isFirstLoginDemo) {
-        setShowAadhaarModal(true);
-        setIsLoading(false);
-        return;
-      }
+      // Set auth cookies for Next.js route protection middleware
+      document.cookie = 'token=demo-auth-token; path=/; max-age=86400; SameSite=Lax';
+      document.cookie = `user_role=${formData.role}; path=/; max-age=86400; SameSite=Lax`;
 
-      // Role-based redirect logic:
-      if (role === 'ADMIN' || role === 'HR') {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/employee/dashboard');
-      }
+      // Role-based redirection via window.location to ensure cookies are sent with HTTP request
+      const targetUrl = formData.role === 'ADMIN' ? '/admin/dashboard' : '/employee/dashboard';
+      window.location.href = targetUrl;
     } catch (err) {
-      console.error('Login error:', err);
-    } finally {
+      setErrorMessage('Invalid credentials.');
       setIsLoading(false);
     }
   };
 
-  const handleAadhaarVerify = async () => {
-    if (aadhaarStep === 'NUMBER') {
-      if (aadhaarInput.replace(/\s/g, '').length !== 12) {
-        setAadhaarError('Please enter a valid 12-digit Aadhaar number');
-        return;
-      }
-      setAadhaarError('');
-      setAadhaarStep('OTP');
-      return;
-    }
+  /**
+   * Handle first-time login Aadhaar verification step
+   */
+  const handleFirstLoginTriggered = () => {
+    setShowAadhaarModal(true);
+  };
 
-    if (aadhaarStep === 'OTP') {
-      // Forward Aadhaar payload to backend without local persistence
-      // await authApi.verifyAadhaar({ aadhaarNumber: aadhaarInput, otp: aadhaarOtp });
-      setShowAadhaarModal(false);
-      setAadhaarInput('');
-      setAadhaarOtp('');
-      
-      // Post-verification role redirect
-      if (role === 'ADMIN' || role === 'HR') {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/employee/dashboard');
-      }
-    }
+  /**
+   * Post-Aadhaar verification redirect
+   */
+  const handleAadhaarSuccess = () => {
+    setShowAadhaarModal(false);
+    document.cookie = 'token=demo-auth-token; path=/; max-age=86400; SameSite=Lax';
+    document.cookie = `user_role=${targetRole}; path=/; max-age=86400; SameSite=Lax`;
+
+    const targetUrl = targetRole === 'ADMIN' ? '/admin/dashboard' : '/employee/dashboard';
+    window.location.href = targetUrl;
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xl font-bold mx-auto mb-3 shadow-md">
-            D
+    <main className="relative w-full min-h-screen bg-[#000000] text-slate-100 flex items-center justify-center overflow-hidden">
+      {/* Decorative Abstract Wireframe Mesh Waves (Red/Orange lower-left, Purple upper-right) */}
+      <LoginBackgroundMesh />
+
+      {/* Main Enlarged Circular Glassmorphism Container */}
+      <div className="relative z-10 flex items-center justify-center p-4 transform translate-y-0 lg:-translate-x-8">
+        <div
+          className="relative w-[340px] h-[340px] sm:w-[410px] sm:h-[410px] md:w-[430px] md:h-[430px] rounded-full flex items-center justify-center bg-[#07070a]/75 backdrop-blur-xl border border-white/[0.09] shadow-2xl transition-all"
+          style={{
+            boxShadow:
+              'inset 0 0 50px rgba(255, 255, 255, 0.025), inset -16px -16px 36px rgba(20, 184, 166, 0.04), inset 16px 16px 36px rgba(168, 85, 247, 0.06), 0 30px 60px -15px rgba(0, 0, 0, 0.9)',
+          }}
+        >
+          {/* Subtle internal atmospheric lights */}
+          <div className="absolute top-12 left-12 w-32 h-32 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-12 right-12 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-8 left-16 w-24 h-24 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Centered Form */}
+          <div className="relative z-20 flex flex-col items-center justify-center">
+            <LoginForm
+              onSubmit={handleLogin}
+              isLoading={isLoading}
+              errorMessage={errorMessage}
+              onFirstLoginDetected={handleFirstLoginTriggered}
+            />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Sign in to DAYFLOW</h1>
-          <p className="text-xs text-slate-500 mt-1">Single sign-on for all organizational roles</p>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center text-lg">Single Login Portal</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <Input
-                label="Work Email / Employee ID"
-                type="text"
-                placeholder="name@dayflow.internal or EMP-001"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-
-              <Input
-                label="Password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-
-              {/* Demo role selector to test role-based redirects before backend is attached */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-slate-500">
-                  Select Role (Starter Simulation)
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['EMPLOYEE', 'ADMIN', 'HR'] as const).map((r) => (
-                    <button
-                      type="button"
-                      key={r}
-                      onClick={() => setRole(r)}
-                      className={`py-1.5 px-2 text-xs font-medium rounded-lg border transition-all ${
-                        role === r
-                          ? 'bg-indigo-50 border-indigo-600 text-indigo-700 font-semibold dark:bg-indigo-950 dark:text-indigo-300'
-                          : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
-                      }`}
-                    >
-                      {r}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <Button type="submit" className="w-full mt-2" isLoading={isLoading}>
-                Sign In
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
       </div>
 
-      {/* First-Login Aadhaar Verification Modal */}
-      <Modal
+      {/* Subtle branding mark in bottom-left corner of the screen */}
+      <div className="absolute bottom-5 left-6 z-20 flex items-center gap-1.5 opacity-40 hover:opacity-75 transition-opacity select-none">
+        <div className="w-2.5 h-2.5 rounded-xs bg-indigo-500/70" />
+        <span className="text-[10px] font-mono tracking-widest text-slate-500">
+          DAYFLOW
+        </span>
+      </div>
+
+      {/* Modular First-Login Aadhaar Modal */}
+      <AadhaarVerificationModal
         isOpen={showAadhaarModal}
         onClose={() => setShowAadhaarModal(false)}
-        title="First-Time Login Verification"
-      >
-        <div className="space-y-4">
-          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-            Welcome to DAYFLOW. As part of your first-time onboarding, please complete your Aadhaar identity verification.
-          </p>
-
-          {aadhaarStep === 'NUMBER' ? (
-            <div className="space-y-3">
-              <Input
-                label="12-Digit Aadhaar Number"
-                type="text"
-                maxLength={12}
-                placeholder="XXXX XXXX XXXX"
-                value={aadhaarInput}
-                onChange={(e) => setAadhaarInput(e.target.value.replace(/\D/g, ''))}
-                error={aadhaarError}
-                helperText="Secure verification via official UIDAI gateway."
-              />
-              <Button onClick={handleAadhaarVerify} className="w-full">
-                Send OTP
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <Input
-                label="Enter 6-Digit OTP"
-                type="text"
-                maxLength={6}
-                placeholder="123456"
-                value={aadhaarOtp}
-                onChange={(e) => setAadhaarOtp(e.target.value.replace(/\D/g, ''))}
-                helperText="OTP sent to mobile linked with Aadhaar"
-              />
-              <Button onClick={handleAadhaarVerify} className="w-full">
-                Complete Verification & Enter
-              </Button>
-            </div>
-          )}
-        </div>
-      </Modal>
+        onVerifySuccess={handleAadhaarSuccess}
+      />
     </main>
   );
 }

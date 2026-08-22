@@ -12,16 +12,16 @@ export const Badge: React.FC<BadgeProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    default: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200',
-    success: 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800',
-    warning: 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800',
-    danger: 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800',
-    info: 'bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800',
+    default: 'bg-white/[0.05] text-slate-300 border border-white/10',
+    success: 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 shadow-xs shadow-emerald-500/10',
+    warning: 'bg-amber-950/40 text-amber-300 border border-amber-500/30 shadow-xs shadow-amber-500/10',
+    danger: 'bg-rose-950/40 text-rose-300 border border-rose-500/30 shadow-xs shadow-rose-500/10',
+    info: 'bg-purple-950/40 text-purple-300 border border-purple-500/30 shadow-xs shadow-purple-500/10',
   };
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantStyles[variant]} ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide ${variantStyles[variant]} ${className}`}
       {...props}
     >
       {children}
